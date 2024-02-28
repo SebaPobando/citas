@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil</title>
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap 4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css"
+      integrity="sha384-H4X+4tKc7b8s4GoMrylmy2ssQYpDHoqzPa9aKXbDwPoPUA3Ra8PA5dGzijN+ePnH"
+      crossorigin="anonymous"
+    />
+    <!-- CSS personalizado -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+  </head>
+  <body>
+    <a href="/logout" class="logout-button btn btn-danger">
+      <span class="glyphicon glyphicon-log-out"></span> Cerrar sesión
+    </a>
+    <a href="/perfil" class="back-button btn btn-primary">Volver a perfil</a>
+    <main class="container p-4">
+      <!-- Bienvenida -->
+      <div class="text-center mt-4">
+        <h1>Edita tu cita {{ current_user.name }}</h1>
+      </div>
+
+      <!-- Formulario para editar cita -->
+      <div class="mt-4">
+        <h2>Editar Cita</h2>
+        <form
+          action="{{ url_for('edit_quote', quote_id=quote.id) }}"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="author">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="author"
+              name="author"
+              value="{{ quote.author }}"
+              required
+            />
+            {% if 'author' in errors %}
+            <p class="text-danger">{{ errors.author }}</p>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="message">Mensaje</label>
+            <textarea
+              class="form-control"
+              id="message"
+              name="message"
+              rows="3"
+              required
+            >
+{{ quote.message }}</textarea
+            >
+            {% if 'message' in errors %}
+            <p class="text-danger">{{ errors.message }}</p>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary">Editar</button>
+        </form>
+      </div>
+    </main>
+    <!-- JavaScript -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"
+      integrity="sha384-GdHf4wZzXzpZXc06i0BnZgXDk/2IHeTf0AkEAQm3/5bVjD1fCg9F0lD3hOXdqW9i"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-MKtfZYsUQNee6SJOGJw5DlQx9y8+NvIa5zp6kfe5W9FXFAH8RxFsxH9KLj4QbI6b"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

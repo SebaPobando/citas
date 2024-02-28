@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil</title>
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap 4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css"
+    />
+    <!-- CSS personalizado -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+  </head>
+  <body>
+    <header class="container-fluid text-white py-3">
+      <div class="row">
+        <div class="col-6">
+          <h1 class="title mb-0">Bienvenido/a {{ current_user.name }}!</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="/logout" class="logout-button btn btn-danger">
+            <span class="glyphicon glyphicon-log-out"></span> Cerrar sesión
+          </a>
+        </div>
+      </div>
+    </header>
+    <main class="container mt-4">
+      <!-- Citas -->
+      <section id="citas">
+        <h2 class="mb-4">Citas</h2>
+        <ul class="list-group">
+          {% for quote in quotes %}
+          <li class="list-group-item mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ quote.author }}</strong>: {{ quote.message }}
+              </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="created-by">Creado por:</span>
+                <a
+                  href="{{ url_for('user_summary', user_id=quote.user.id) }}"
+                  class="author-link"
+                  >{{ quote.user.name }}</a
+                >
+              </div>
+              <div class="d-flex">
+                {% if current_user.is_authenticated %} {% if quote.user_id ==
+                current_user.id %}
+                <form
+                  action="{{ url_for('delete_quote', quote_id=quote.id) }}"
+                  method="POST"
+                >
+                  <button type="submit" class="btn btn-danger btn-sm mr-2">
+                    Eliminar
+                  </button>
+                </form>
+                <form
+                  action="{{ url_for('edit_quote', quote_id=quote.id) }}"
+                  method="GET"
+                >
+                  <button type="submit" class="btn btn-info btn-sm mr-2">
+                    Editar
+                  </button>
+                </form>
+                {% endif %} {% endif %}
+                <form
+                  action="{{ url_for('add_to_favorites', quote_id=quote.id) }}"
+                  method="POST"
+                >
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    Agregar a favoritos
+                  </button>
+                </form>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <!-- Citas Favoritas -->
+      <section id="citas-favoritas" class="mt-4">
+        <h2 class="mb-4">Citas Favoritas</h2>
+        <ul class="list-group">
+          {% for favorite in favorites %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ favorite.quote.author }}</strong>: {{
+                favorite.quote.message }}
+              </div>
+              <div>
+                <span class="created-by">Creado por:</span>
+                <span class="author-name">{{ favorite.quote.user.name }}</span>
+                <form
+                  action="{{ url_for('remove_from_favorites', favorite_id=favorite.id) }}"
+                  method="POST"
+                >
+                  <button type="submit" class="btn btn-danger btn-sm">
+                    Quitar de favoritos
+                  </button>
+                </form>
+              </div>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
+
+      <!-- Formulario para agregar cita -->
+      <section id="agregar-cita" class="mt-4">
+        <h2 class="mb-4">Agregar Cita</h2>
+        <form action="{{ url_for('add_quote') }}" method="POST">
+          <div class="form-group">
+            <label for="author">Citado por:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="author"
+              name="author"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="message">Mensaje</label>
+            <textarea
+              class="form-control"
+              id="message"
+              name="message"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Agregar Cita</button>
+        </form>
+      </section>
+    </main>
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Mostrar mensajes flash solo para citas -->
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %} {% if category ==
+          'success' %} {% if message.startswith('¡La cita ha sido') or
+          message.startswith('Cita agregada') or message.startswith('Cita
+          removida') %}
+          <div
+            class="alert alert-success alert-dismissible fade show mt-3 text-center mx-auto"
+            role="alert"
+            style="max-width: 400px"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %} {% elif category == 'error' %} {% if
+          message.startswith('Las contraseñas no coinciden') %}
+          <div
+            class="alert alert-danger alert-dismissible fade show mt-3 text-center mx-auto"
+            role="alert"
+            style="max-width: 400px"
+          >
+            {{ message }}
+            <button
+              type="button"
+              class="close"
+              data-dismiss="alert"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %} {% endif %} {% endfor %} {% endif %} {% endwith %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

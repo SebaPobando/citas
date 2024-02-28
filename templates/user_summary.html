@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfil</title>
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap 4 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css"
+    />
+    <!-- CSS personalizado -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+  </head>
+  <body>
+    <header class="container-fluid text-white py-3">
+      <div class="row">
+        <div class="col-6">
+          <h1 class="title mb-0">Bienvenido/a {{ current_user.name }}!</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="/perfil" class="back-button btn btn-primary"
+            >Volver a perfil</a
+          >
+          <a href="/logout" class="logout-button btn btn-danger">
+            <span class="glyphicon glyphicon-log-out"></span> Cerrar sesión
+          </a>
+        </div>
+      </div>
+    </header>
+    <main class="container mt-4">
+      <div class="container mt-4">
+        <h1>
+          Citas posteadas por: {% if quotes %}{{ quotes[0].user.name }}{% endif
+          %}
+        </h1>
+        <!-- Contador de citas -->
+        <p class="contador">Total de citas: {{ quotes|length }}</p>
+        <hr />
+        <!-- Mostrar todas las citas -->
+        <ul class="list-group list-group-flush text-center">
+          {% for quote in quotes %}
+          <li class="list-group-item">
+            <div><strong>{{ quote.author }}</strong>: {{ quote.message }}</div>
+            <div>
+              <!-- Enlace al resumen del usuario -->
+              <a
+                href="{{ url_for('user_summary', user_id=quote.user.id) }}"
+                class="author-name"
+                >{{ quote.user.name }}</a
+              >
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </main>
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
